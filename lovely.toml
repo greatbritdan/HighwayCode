@@ -1,0 +1,139 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 0
+
+# context.post_plasma_step
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''hand_chips = mod_chips(nu_chip or hand_chips)'''
+match_indent = true
+position = "after"
+payload = '''
+-- context.post_plasma_step calculations
+SMODS.calculate_context({full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, post_plasma_step = true})
+'''
+
+# context.before_scoring_cards
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''if modded then update_hand_text({sound = 'chips2', modded = modded}, {chips = hand_chips, mult = mult}) end'''
+match_indent = true
+position = "after"
+payload = '''
+-- context.before_scoring_cards calculations
+SMODS.calculate_context({full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, before_scoring_cards = true})
+'''
+
+# Double Yellow Line Debuffn't
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = "function Card:set_debuff(should_debuff)"
+position = 'after'
+match_indent = true
+payload = '''
+if BHC_IsDoubleYellowLine(self) then
+    if self.debuff then
+        self.debuff = false
+        if self.area == G.jokers then self:add_to_deck(true) end
+    end
+    return
+end
+'''
+
+# Double Red Line Destroy Card
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''local h_dollars = self:get_h_dollars()'''
+position = "after"
+match_indent = true
+payload = '''
+if self.ability.redline then
+    ret.redline = true
+    ret.card = self
+end
+'''
+
+# Double Red Line Reset Redline
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''h_dollars = center.config.h_dollars or 0,'''
+position = "after"
+match_indent = true
+payload = '''
+redline = center.config.redline or false,
+'''
+
+# Draw back into deck
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''G.FUNCS.draw_from_play_to_discard()'''
+position = "at"
+match_indent = true
+payload = '''
+SMODS.calculate_context({return_to_hand = true})
+if G.GAME.bhc_returntohand then
+    G.FUNCS.draw_from_play_to_hand_bhc()
+    G.GAME.bhc_returntohand = nil
+else
+    G.FUNCS.draw_from_play_to_discard()
+end
+'''
+
+# Moterway Deck
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if center.consumeable then '''
+position = "before"
+match_indent = true
+payload = '''
+    if G.GAME.current_round.roadsigndoubles and string.find(self.ability.name, "j_bhc") and self.ability.name ~= "j_bhc_trafficlight" then
+        for key,val in pairs(self.ability.extra) do
+            if type(val) == "number" then
+                if G.GAME.current_round.roadsignquadruples then
+                    self.ability.extra[key] = val + val + val + val
+                else
+                    self.ability.extra[key] = val + val
+                end
+            end
+        end
+    end
+'''
+
+# Reroll ammount
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''G.GAME.round_scores.times_rerolled.amt = G.GAME.round_scores.times_rerolled.amt + 1'''
+position = "after"
+match_indent = true
+payload = '''G.GAME.current_round.bhc_nostopping_rerolls = G.GAME.current_round.bhc_nostopping_rerolls + 1'''
+
+# Give priority to oncoming trafic
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''--Joker Effects'''
+position = "before"
+match_indent = true
+payload = '''SMODS.calculate_context({full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, after_scoring_cards = true})'''
+
+# Motorway Sleeve
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''self.sell_cost = math.max(1, math.floor(self.cost/2)) + (self.ability.extra_value or 0)'''
+position = "before"
+match_indent = true
+payload = '''
+if G.GAME.current_round.cost_scaling then 
+    self.cost = math.floor((self.cost*G.GAME.current_round.cost_scaling)+0.5)
+end
+'''

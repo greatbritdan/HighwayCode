@@ -1,0 +1,11 @@
+{
+	"id": "HIGHWAYCODE",
+	"name": "Highway Code",
+	"display_name": "Highway Code",
+	"author": ["Britdan"],
+	"description": "Adds new Jokers and Enhancements based on the UK Road Signs and Markings.",
+	"prefix": "bhc",
+	"main_file": "main.lua",
+	"version": "1.0.0",
+	"badge_colour": "006C49"
+}
