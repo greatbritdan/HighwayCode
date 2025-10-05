@@ -275,7 +275,7 @@ G.FUNCS.can_reroll = function(e)
         e.config.button = nil
     else
         e.config.colour = G.C.GREEN
-        e.config.button = 'reroll_shop'
+        e.config.button = "reroll_shop"
     end
 end
 
@@ -412,7 +412,7 @@ SMODS.Joker{
                         return true
                     end)
                 }))
-                SMODS.calculate_effect({message=localize('k_plus_tarot'), colour=G.C.PURPLE}, context.blueprint_card or card)
+                SMODS.calculate_effect({message=localize("k_plus_tarot"), colour=G.C.PURPLE}, context.blueprint_card or card)
             end
 
             local create_spectral = SMODS.pseudorandom_probability(card, "bhc_slipperyroadspectral", card.ability.extra.one, card.ability.extra.spectral_odds)
@@ -425,7 +425,7 @@ SMODS.Joker{
                         return true
                     end
                 }))
-                SMODS.calculate_effect({message=localize('k_plus_spectral'), colour=G.C.SECONDARY_SET.Spectral}, context.blueprint_card or card)
+                SMODS.calculate_effect({message=localize("k_plus_spectral"), colour=G.C.SECONDARY_SET.Spectral}, context.blueprint_card or card)
             end
 
             return nil, true -- This is for Joker retrigger purposes
@@ -839,7 +839,7 @@ SMODS.Joker{
     blueprint_compat = true,
     cost = 7,
     pools = {bhc_road_signs=true},
-    config = {extra={chips=0,chips_mod=3}},
+    config = {extra={chips=0,chips_mod=2}},
     loc_vars = function(self,info_queue,card)
         return {vars={card.ability.extra.chips,card.ability.extra.chips_mod}}
     end,
@@ -847,9 +847,8 @@ SMODS.Joker{
         if context.joker_main then
             return {chips=card.ability.extra.chips}
         end
-        if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
-            local dollars = G.GAME.interest_amount*math.min(math.floor(G.GAME.dollars/5), G.GAME.interest_cap/5)
-            card.ability.extra.chips = card.ability.extra.chips + (dollars * card.ability.extra.chips_mod)
+        if context.cash_out and not context.blueprint then
+            card.ability.extra.chips = card.ability.extra.chips + (context.dollars * card.ability.extra.chips_mod)
             return {message=localize("k_upgrade_ex"), colour=G.C.CHIPS}
         end
     end,

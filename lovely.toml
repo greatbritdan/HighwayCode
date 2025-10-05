@@ -137,3 +137,14 @@ if G.GAME.current_round.cost_scaling then
     self.cost = math.floor((self.cost*G.GAME.current_round.cost_scaling)+0.5)
 end
 '''
+
+# Cashout joker trigger
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''G.GAME.current_round.dollars = config.dollars'''
+position = "after"
+match_indent = true
+payload = '''
+SMODS.calculate_context({cash_out = true, dollars = G.GAME.current_round.dollars})
+'''

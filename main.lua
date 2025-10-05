@@ -83,9 +83,7 @@ table.insert(SMODS.other_calculation_keys, "redline")
 SMODS.Challenge{
     key = "roadtrip",
     rules = {
-        custom = {
-			{id="just_road_signs"}
-		},
+        custom = {{id="just_road_signs"}},
         modifiers = {}
     },
     jokers = {},
@@ -133,7 +131,7 @@ function ConfigTab()
     local nodes = {
 		{n=G.UIT.R, config={align="cm"}, nodes={
 			{n=G.UIT.O, config={
-				object=DynaText({string="Settings!", colours={G.C.WHITE}, shadow=true, rotate=true, bump=true, scale=0.7}),
+				object=DynaText({string=localize("k_bhc_configsettings"), colours={G.C.WHITE}, shadow=true, rotate=true, bump=true, scale=0.7}),
 			}}},
 		},
 	}
@@ -142,7 +140,7 @@ function ConfigTab()
 	local right_settings = {n=G.UIT.C, config={align="tl", padding=0.05}, nodes={}}
 	local config = {n=G.UIT.R, config={align="tm", padding=0}, nodes={left_settings, right_settings}}
     nodes[#nodes+1] = config
-    nodes[#nodes+1] = create_toggle({label="Enable Vanilla Modifications", active_colour=G.C.RED, ref_table=config_data, ref_value="enable_modifications"})
+    nodes[#nodes+1] = create_toggle({label=localize("k_bhc_configenablevanilla"), active_colour=G.C.RED, ref_table=config_data, ref_value="enable_modifications"})
 
     return {n=G.UIT.ROOT, config={emboss=0.05, minh=6, r=0.1, minw=10, align="cm", padding=0.2, colour=G.C.BLACK}, nodes=nodes}
 end

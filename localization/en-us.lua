@@ -229,8 +229,8 @@ return {
                 text = {
                     "{C:chips}+#1#{} Chips",
                     "Gains {C:chips}+#2#{} Chips for each",
-                    "dollar of interest received",
-                    "at the end of the round",
+                    "dollar earned at the",
+                    "end of the round",
                 },
             },
             j_bhc_onewayahead = {
@@ -422,6 +422,9 @@ return {
             bhc_trafficlight_3 = "Go!",
             k_bhc_even = "Even!",
             k_bhc_odd = "Odd!",
+
+            k_bhc_configsettings = "Settings!",
+            k_bhc_configenablevanilla = "Enable Vanilla Modifications"
         }
     },
 }
