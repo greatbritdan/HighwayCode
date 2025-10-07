@@ -839,7 +839,7 @@ SMODS.Joker{
     blueprint_compat = true,
     cost = 7,
     pools = {bhc_road_signs=true},
-    config = {extra={chips=0,chips_mod=2}},
+    config = {extra={chips=0,chips_mod=1}},
     loc_vars = function(self,info_queue,card)
         return {vars={card.ability.extra.chips,card.ability.extra.chips_mod}}
     end,
@@ -916,7 +916,7 @@ SMODS.Joker{
     calculate = function(self, card, context)
         if context.selling_self and (card.ability.extra.round >= card.ability.extra.totalrounds) and not context.blueprint then
             local key = pseudorandom_element(G.P_CENTER_POOLS["bhc_road_signs"], pseudoseed("bhc_otherdangercard")).key
-            SMODS.add_card{set="Joker",key=key,edition="e_negative",allow_duplicates=true}
+            SMODS.add_card{set="Joker",key=key,edition="e_negative"}
             return {message=localize("k_bhc_created")}
         end
         if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
@@ -1018,20 +1018,20 @@ SMODS.Joker{
     blueprint_compat = true,
     cost = 8,
     pools = {bhc_road_signs=true},
-    config = {extra={state="even",repetitionseven=2,repetitionsodd=3}},
+    config = {extra={state="even",repetitions=2}},
     loc_vars = function(self,info_queue,card)
         if card.ability.extra.state == "even" then
-            return {vars={card.ability.extra.state,card.ability.extra.repetitionseven,"odd"}}
+            return {vars={card.ability.extra.state,card.ability.extra.repetitions,"odd"}}
         else
-            return {vars={card.ability.extra.state,card.ability.extra.repetitionsodd,"even"}}
+            return {vars={card.ability.extra.state,card.ability.extra.repetitions+1,"even"}}
         end
     end,
     calculate = function(self, card, context)
         if context.repetition and context.cardarea == G.play then
             if (card.ability.extra.state == "even" and G.GAME.current_round.discards_left % 2 == 0) then
-                return {repetitions=card.ability.extra.repetitionseven}
+                return {repetitions=card.ability.extra.repetitions}
             elseif (card.ability.extra.state == "odd" and G.GAME.current_round.discards_left % 2 == 1) then
-                return {repetitions=card.ability.extra.repetitionsodd}
+                return {repetitions=card.ability.extra.repetitions+1}
             end
             return nil, true
         end
@@ -1050,9 +1050,9 @@ SMODS.Joker{
             retrigger_function = function(playing_card,scoring_hand,held_in_hand,joker_card)
                 if held_in_hand then return 0 end
                 if (joker_card.ability.extra.state == "even" and G.GAME.current_round.discards_left % 2 == 0) then
-                    return disp.calculate_joker_triggers(joker_card) * joker_card.ability.extra.repetitionseven
+                    return disp.calculate_joker_triggers(joker_card) * joker_card.ability.extra.repetitions
                 elseif (joker_card.ability.extra.state == "odd" and G.GAME.current_round.discards_left % 2 == 1) then
-                    return disp.calculate_joker_triggers(joker_card) * joker_card.ability.extra.repetitionsodd
+                    return disp.calculate_joker_triggers(joker_card) * (joker_card.ability.extra.repetitions+1)
                 end
             end
         }
@@ -1081,7 +1081,7 @@ SMODS.Joker{
                 func = function()
                     for _ = 1, jokers_to_create do
                         local key = pseudorandom_element(G.P_CENTER_POOLS["bhc_road_signs"], pseudoseed("bhc_blanksigncard")).key
-                        SMODS.add_card{set="Joker",key=key,allow_duplicates=true}
+                        SMODS.add_card{set="Joker",key=key}
                         G.GAME.joker_buffer = 0
                     end
                     return true
